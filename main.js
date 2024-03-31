@@ -78,10 +78,23 @@ function parser(tokens) {
   return ast;
 }
 
+function codeGeneration (node) {
+    switch (node.type){
+        case 'Program': return node.body.map(codeGeneration).join('\n');
+        case 'Declaration': return `const ${node.name} = ${node.value}`;
+        case 'Print': return `console.log(${node.expression})`
+    }
+}
+
 function compiler(input) {
   const tokens = lexer(input);
   const ast = parser(tokens);
-  console.log(ast);
+  const executableCode = codeGeneration(ast)
+  return executableCode;
+}
+
+function runner(input){
+    eval(input);
 }
 
 const code = `
@@ -90,4 +103,6 @@ martians b= 1;
 martians sum= a+b;
 launch(sum)
 `;
-compiler(code);
+
+const exe= compiler(code);
+runner(exe);
